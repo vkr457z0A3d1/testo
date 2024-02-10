@@ -1,0 +1,7 @@
+appengine-python-standard>=1.0.0
+google-auth
+google-cloud-ndb
+webapp2==3.0.0b1
+jinja2==3.0
+pycryptodome
+memcache

@@ -10,7 +10,10 @@
 
 import os
 
-TESTING = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
+try:
+    from config import TESTING
+except ImportError:
+    TESTING = os.environ.get('SERVER_SOFTWARE', '').startswith('Development')
 
 APP_DOMAIN = 'change-me-in-config-py.appspot.com'
 APP_NAME = 'CHANGE-ME-IN-CONFIG.PY'
@@ -144,10 +147,6 @@ GD_REDIRECT_URI = OAUTH_CALLBACK_URI
 GD_AUTH_URL = 'https://www.googleapis.com/oauth2/v3/token'
 GD_LOGIN_URL = 'https://accounts.google.com/o/oauth2/auth'
 
-HC_REDIRECT_URI = OAUTH_CALLBACK_URI
-HC_AUTH_URL = 'https://api.hubic.com/oauth/token/'
-HC_LOGIN_URL = 'https://api.hubic.com/oauth/auth/'
-
 AMZ_REDIRECT_URI = OAUTH_CALLBACK_URI
 AMZ_AUTH_URL = 'https://api.amazon.com/auth/o2/token'
 AMZ_LOGIN_URL = 'https://www.amazon.com/ap/oa'
@@ -188,15 +187,6 @@ LOOKUP = {
         'redirect-uri': GD_REDIRECT_URI,
         'auth-url': GD_AUTH_URL,
         'login-url': GD_LOGIN_URL
-    },
-
-    'hc': {
-        'display': 'HubiC',
-        'client-id': HC_CLIENT_ID,
-        'client-secret': HC_CLIENT_SECRET,
-        'redirect-uri': HC_REDIRECT_URI,
-        'auth-url': HC_AUTH_URL,
-        'login-url': HC_LOGIN_URL
     },
 
     'amz': {
@@ -297,13 +287,6 @@ SERVICES = [
         'id': 'msgroup',
         'scope': 'offline_access Files.ReadWrite.All Group.Read.All',
         'servicelink': 'https://support.office.com/en-us/article/Learn-about-Office-365-groups-b565caa1-5c40-40ef-9915-60fdb2d97fa2'
-    },
-    {
-        'display': 'HubiC',
-        'type': 'hc',
-        'id': 'hubic',
-        'scope': 'credentials.r',
-        'servicelink': 'https://hubic.com'
     },
     {
         'display': 'Amazon Cloud Drive',

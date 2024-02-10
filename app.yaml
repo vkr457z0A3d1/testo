@@ -1,6 +1,10 @@
-runtime: python27
+runtime: python311
 api_version: 1
-threadsafe: no
+
+app_engine_apis: true
+
+env_variables:
+  MEMCACHE_USE_CROSS_COMPATIBLE_PROTOCOL: 'True'
 
 instance_class: F1
 automatic_scaling:
@@ -34,12 +38,4 @@ handlers:
 - url: .*
   script: main.app
 
-libraries:
-- name: webapp2
-  version: latest
-- name: jinja2
-  version: latest
-- name: django
-  version: latest
-- name: pycrypto
-  version: latest
+

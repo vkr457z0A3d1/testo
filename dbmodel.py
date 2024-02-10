@@ -1,7 +1,9 @@
 import datetime
 
-from google.appengine.ext import db
-
+from google.appengine.ext import ndb as db
+#ndb_ctx = db.get_context()
+#ndb_ctx.set_cache_policy(lambda key: False)
+#ndb_ctx.set_memcache_policy(lambda key: False)
 
 class AuthToken(db.Model):
     """Representation of a stored authid"""
@@ -31,16 +33,16 @@ class StateToken(db.Model):
 def create_fetch_token(fetchtoken):
     # A fetch token stays active for 30 minutes
     if fetchtoken is not None and fetchtoken != '':
-        e = FetchToken.get_by_key_name(fetchtoken)
+        e = FetchToken.get_by_id(fetchtoken)
         if e is None:
-            FetchToken(key_name=fetchtoken, token=fetchtoken, fetched=False,
+            FetchToken(id=fetchtoken, token=fetchtoken, fetched=False,
                        expires=datetime.datetime.utcnow() + datetime.timedelta(minutes=5)).put()
 
 
 @db.transactional(xg=True)
 def update_fetch_token(fetchtoken, authid):
     if fetchtoken is not None and fetchtoken != '':
-        e = FetchToken.get_by_key_name(fetchtoken)
+        e = FetchToken.get_by_id(fetchtoken)
         if e is not None:
             e.expires = datetime.datetime.utcnow() + datetime.timedelta(seconds=30)
             e.authid = authid
@@ -50,10 +52,10 @@ def update_fetch_token(fetchtoken, authid):
 
 @db.transactional
 def insert_new_authtoken(keyid, user_id, blob, expires, service):
-    entry = AuthToken.get_by_key_name(keyid)
+    entry = AuthToken.get_by_id(keyid)
     if entry is None:
 
-        entry = AuthToken(key_name=keyid, user_id=user_id, blob=blob, expires=expires, service=service)
+        entry = AuthToken(id=keyid, user_id=user_id, blob=blob, expires=expires, service=service)
         entry.put()
 
         return entry
@@ -63,7 +65,7 @@ def insert_new_authtoken(keyid, user_id, blob, expires, service):
 
 @db.transactional(xg=True)
 def insert_new_statetoken(token, service, fetchtoken, version):
-    entry = StateToken.get_by_key_name(token)
+    entry = StateToken.get_by_id(token)
     if entry is None:
 
         tokenversion = None
@@ -73,7 +75,7 @@ def insert_new_statetoken(token, service, fetchtoken, version):
             pass
 
         entry = StateToken(
-            key_name=token,
+            id=token,
             service=service,
             fetchtoken=fetchtoken,
             expires=datetime.datetime.utcnow() + datetime.timedelta(minutes=5),
